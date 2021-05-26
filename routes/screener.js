@@ -10,7 +10,15 @@ router.get("/screener/:id", async (req, res) => {
     try {
         const query = req.params.id;
         const response = await axios.get(
-            `https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
+            `https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`, {
+            headers: {
+                "accept-language": "en-US,en;q=0.9,kn;q=0.8",
+                "sec-fetch-site": "same-origin",
+                "user-agent":
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+                "x-requested-with": "XMLHttpRequest",
+            },
+        });
         const $ = cheerio.load(response.data);
         $(
             "#transactions > div > div > div.table-responsive-md > table > tbody > tr"
@@ -57,7 +65,7 @@ router.get("/screener/:id", async (req, res) => {
     } catch (e) {
         res.send({
             status: 400,
-            error: e.message,
+            error: e,
         });
     }
 });
