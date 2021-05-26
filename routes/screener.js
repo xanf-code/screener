@@ -1,16 +1,17 @@
 const express = require("express");
 const cheerio = require("cheerio");
-const axios = require("axios");
+// const axios = require("axios");
 const router = express.Router();
-
+const got = require('got');
 
 const state = [];
 
 router.get("/screener/:id", async (req, res) => {
     try {
         const query = req.params.id;
-        const response = await axios.get(
+        const response = await got(
             `https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`, {
+
             headers: {
                 "accept-language": "en-US,en;q=0.9,kn;q=0.8",
                 "sec-fetch-site": "same-origin",
@@ -19,7 +20,7 @@ router.get("/screener/:id", async (req, res) => {
                 "x-requested-with": "XMLHttpRequest",
             },
         });
-        const $ = cheerio.load(response.data);
+        const $ = cheerio.load(response.body);
         $(
             "#transactions > div > div > div.table-responsive-md > table > tbody > tr"
         ).each((index, el) => {
