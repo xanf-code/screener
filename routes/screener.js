@@ -7,10 +7,36 @@ const request = require('request-promise');
 
 router.get("/test/:id", async (req, res) => {
     const query = req.params.id;
-    const response = await request.get(`https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending`);
-    res.send({
-        "response": response,
-    })
+    var _include_headers = function (body, response, resolveWithFullResponse) {
+        return {
+            'headers': {
+                'accept': '*/*',
+                "accept-language": "en-US,en-IN;q=0.9,en-UM;q=0.8,en;q=0.7",
+                "sec-ch-ua": '\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"90\", \"Google Chrome\";v=\"90\"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                "x-requested-with": "XMLHttpRequest",
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+            }, 'data': body
+        };
+    };
+
+    var options = {
+        method: 'GET',
+        uri: `https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending`,
+        transform: _include_headers,
+    }
+
+    return request(options)
+        .then(function (response) {
+            res.send({
+                'headers': response.headers,
+                'data': response.data,
+            });
+
+        });
 })
 
 router.get("/screener/:id", async (req, res) => {
