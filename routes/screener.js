@@ -2,8 +2,7 @@ const express = require("express");
 const cheerio = require("cheerio");
 const router = express.Router();
 const got = require('got');
-
-const state = [];
+const Screener = require('../models/screener_model');
 
 router.get("/screener/:id", async (req, res) => {
     try {
@@ -26,18 +25,16 @@ router.get("/screener/:id", async (req, res) => {
             "mode": "cors"
         });
         const $ = cheerio.load(response.body);
-        const scrapedData = [];
-        const elemSelector = "#transactions > div > div > div.table-responsive-md > table > tbody > tr";
-        $(elemSelector).each((index, el) => {
+        $('#transactions > div > div > div.table-responsive-md > table > tbody > tr').each((index, el) => {
             const notificationDate = $(el).find("td:nth-child(2)").text().trim();
             const transactionDate = $(el).find("td:nth-child(3)").text().trim();
             const companyName = $(el)
                 .find("td:nth-child(4) > div > a:nth-child(1)")
                 .text()
                 .trim();
-            const ticker = $(el).find("td:nth-child(4) > div > span").text().trim();
+            const ticker = $(el).find("td:nth-child(4) > div > span").text().replace("(", " ").replace(")", " ").trim();
             const companyType = $(el).find("td:nth-child(4) > small").text().trim();
-            const insiderName = $(el).find("td:nth-child(6) > p").text().trim();
+            const insiderName = $(el).find("td:nth-child(6) > p:nth-child(1)").text().trim();
             const insiderTitle = $(el).find("td:nth-child(6) > span").text().trim();
             const tradeType = $(el)
                 .find("td:nth-child(5) > span > span.d-none.d-sm-block")
@@ -57,27 +54,88 @@ router.get("/screener/:id", async (req, res) => {
             const companyLink = $(el)
                 .find("td:nth-child(4) > div > a:nth-child(1)")
                 .attr("href");
-
-            const data = { notificationDate, transactionDate, companyName, ticker, companyLink, companyType, insiderName, insiderTitle, tradeType, tradePrice, quantityshares, percentage, value, countryCode, countryImage };
-
-            return scrapedData.push(data);
+            const screener = Screener({
+                Index: index,
+                NotificationDate: notificationDate,
+                TransactionDate: transactionDate,
+                CountryCode: countryCode,
+                Ticker: ticker,
+                CompanyType: companyType,
+                CompanyName: companyName,
+                InsiderName: insiderName,
+                InsiderTitle: insiderTitle,
+                TradeType: tradeType,
+                Price: tradePrice,
+                QuantityShares: quantityshares,
+                Percentage: percentage,
+                Value: value,
+                url: {
+                    CompanyLink: companyLink,
+                    CountryImage: countryImage,
+                }
+            });
+            screener.save();
         });
         res.send({
-            page: parseInt(query),
-            totalPage: 100,
-            nextPage: parseInt(query) + 1,
-            lastPage: parseInt(query) - 1,
-            perPage: state.length,
+            // page: parseInt(query),
+            // totalPage: 100,
+            // nextPage: parseInt(query) + 1,
+            // lastPage: parseInt(query) - 1,
+            // perPage: state.length,
             status: 200,
-            results: scrapedData,
+            // results: scrapedData,
         });
-
     } catch (e) {
         res.send({
             status: 400,
-            error: e,
+            error: e.message,
         });
     }
 });
+
+//GET All insider
+router.get('/data', async (req, res) => {
+    try {
+        const limit = req.query.limit ? parseInt(req.query.limit) : 75;
+        const page = req.query.page ? parseInt(req.query.page) : 1;
+        const count = await Screener.countDocuments();
+        const result = await Screener.find({}, "-__v")
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort({ NotificationDate: -1 });
+        res.status(200).json({
+            serverTime: Date.now(),
+            length: count,
+            currentPage: page,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            perPage: limit,
+            totalPages: parseInt((count / limit).toFixed()),
+            isNextPageExist: (page + 1) <= (count / limit) ? true : false,
+            isLastPageExist: (page - 1) == 0 ? false : true,
+            result: result,
+        });
+    }
+    catch (e) {
+        res.send({
+            status: 400,
+            error: e.message,
+        });
+    }
+})
+
+//InsiderName Individual
+router.get('/screener/:insiderName', async (req, res) => {
+    try {
+        const result = await Screener.find({ InsiderName: req.params.insiderName }, "-__v");
+        res.status(200).json({ serverTime: Date.now(), total: result.length, result });
+    }
+    catch (err) {
+        res.send({
+            status: 400,
+            error: e.message,
+        });
+    }
+})
 
 module.exports = router;
