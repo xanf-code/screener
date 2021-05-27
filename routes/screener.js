@@ -26,6 +26,7 @@ router.get("/screener/:id", async (req, res) => {
             "mode": "cors"
         });
         const $ = cheerio.load(response.body);
+        console.log('here1')
         $('#transactions > div > div > div.table-responsive-md > table > tbody > tr').each((index, el) => {
             const notificationDate = $(el).find("td:nth-child(2)").text().trim();
             const transactionDate = $(el).find("td:nth-child(3)").text().trim();
@@ -55,26 +56,27 @@ router.get("/screener/:id", async (req, res) => {
             const companyLink = $(el)
                 .find("td:nth-child(4) > div > a:nth-child(1)")
                 .attr("href");
-            const screener = new Screener({
-                NotificationDate: notificationDate,
-                TransactionDate: transactionDate,
-                CountryCode: countryCode,
-                Ticker: ticker,
-                CompanyType: companyType,
-                CompanyName: companyName,
-                InsiderName: insiderName,
-                InsiderTitle: insiderTitle,
-                TradeType: tradeType,
-                Price: tradePrice,
-                QuantityShares: quantityshares,
-                Percentage: percentage,
-                Value: value,
-                url: {
-                    CompanyLink: companyLink,
-                    CountryImage: countryImage,
-                }
-            });
-            screener.save();
+            // const screener = new Screener({
+            //     NotificationDate: notificationDate,
+            //     TransactionDate: transactionDate,
+            //     CountryCode: countryCode,
+            //     Ticker: ticker,
+            //     CompanyType: companyType,
+            //     CompanyName: companyName,
+            //     InsiderName: insiderName,
+            //     InsiderTitle: insiderTitle,
+            //     TradeType: tradeType,
+            //     Price: tradePrice,
+            //     QuantityShares: quantityshares,
+            //     Percentage: percentage,
+            //     Value: value,
+            //     url: {
+            //         CompanyLink: companyLink,
+            //         CountryImage: countryImage,
+            //     }
+            // });
+            // screener.save();
+            console.log('here')
         });
         res.send({
             type: 'scrape',
@@ -119,18 +121,18 @@ router.get('/data', async (req, res) => {
     }
 })
 
-//InsiderName Individual
-router.get('/screener/:insiderName', async (req, res) => {
-    try {
-        const result = await Screener.find({ InsiderName: req.params.insiderName }, "-__v");
-        res.status(200).json({ serverTime: Date.now(), total: result.length, result });
-    }
-    catch (err) {
-        res.send({
-            status: 400,
-            error: e.message,
-        });
-    }
-})
+// //InsiderName Individual
+// router.get('/screener/:insiderName', async (req, res) => {
+//     try {
+//         const result = await Screener.find({ InsiderName: req.params.insiderName }, "-__v");
+//         res.status(200).json({ serverTime: Date.now(), total: result.length, result });
+//     }
+//     catch (err) {
+//         res.send({
+//             status: 400,
+//             error: e.message,
+//         });
+//     }
+// })
 
 module.exports = router;
