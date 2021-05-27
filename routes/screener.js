@@ -27,6 +27,7 @@ router.get("/test/:id", async (req, res) => {
         method: 'GET',
         uri: `https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending`,
         transform: _include_headers,
+        resolveWithFullResponse: true,
     }
 
     return request(options)
