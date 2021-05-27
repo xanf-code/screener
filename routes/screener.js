@@ -1,13 +1,13 @@
 const express = require("express");
 const cheerio = require("cheerio");
 const router = express.Router();
+const got = require('got');
 const Screener = require('../models/screener_model');
-const axios = require('axios')
 
 router.get("/screener/:id", async (req, res) => {
     try {
         const query = req.params.id;
-        const response = await axios.get(
+        const response = await got(
             `https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`, {
             "headers": {
                 "accept": "*/*",
@@ -24,7 +24,7 @@ router.get("/screener/:id", async (req, res) => {
             "method": "GET",
             "mode": "cors"
         });
-        const $ = cheerio.load(response.data);
+        const $ = cheerio.load(response.body);
         $('#transactions > div > div > div.table-responsive-md > table > tbody > tr').each((index, el) => {
             const notificationDate = $(el).find("td:nth-child(2)").text().trim();
             const transactionDate = $(el).find("td:nth-child(3)").text().trim();
