@@ -26,38 +26,41 @@ router.get("/screener/:id", async (req, res) => {
             "mode": "cors"
         });
         const $ = cheerio.load(response.body);
-        $(
-            "#transactions > div > div > div.table-responsive-md > table > tbody > tr"
-        ).each((index, el) => {
-            state[index] = {};
-            state[index]['notificationDate'] = $(el).find("td:nth-child(2)").text().trim();
-            state[index]['transactionDate'] = $(el).find("td:nth-child(3)").text().trim();
-            state[index]['companyName'] = $(el)
+        const scrapedData = [];
+        const elemSelector = "#transactions > div > div > div.table-responsive-md > table > tbody > tr";
+        $(elemSelector).each((index, el) => {
+            const notificationDate = $(el).find("td:nth-child(2)").text().trim();
+            const transactionDate = $(el).find("td:nth-child(3)").text().trim();
+            const companyName = $(el)
                 .find("td:nth-child(4) > div > a:nth-child(1)")
                 .text()
                 .trim();
-            state[index]['ticker'] = $(el).find("td:nth-child(4) > div > span").text().trim();
-            state[index]['companyType'] = $(el).find("td:nth-child(4) > small").text().trim();
-            state[index]['insiderName'] = $(el).find("td:nth-child(6) > p").text().trim();
-            state[index]['insiderTitle'] = $(el).find("td:nth-child(6) > span").text().trim();
-            state[index]['tradeType'] = $(el)
+            const ticker = $(el).find("td:nth-child(4) > div > span").text().trim();
+            const companyType = $(el).find("td:nth-child(4) > small").text().trim();
+            const insiderName = $(el).find("td:nth-child(6) > p").text().trim();
+            const insiderTitle = $(el).find("td:nth-child(6) > span").text().trim();
+            const tradeType = $(el)
                 .find("td:nth-child(5) > span > span.d-none.d-sm-block")
                 .text()
                 .trim();
-            state[index]['tradePrice'] = $(el).find("td:nth-child(9)").text().trim();
-            state[index]['quantityshares'] = $(el).find("td:nth-child(8)").text().trim();
-            state[index]['percentage'] = $(el).find("td:nth-child(8) > span > i > b").text().trim();
-            state[index]['value'] = $(el)
+            const tradePrice = $(el).find("td:nth-child(9)").text().trim();
+            const quantityshares = $(el).find("td:nth-child(8)").text().trim();
+            const percentage = $(el).find("td:nth-child(8) > span > i > b").text().trim();
+            const value = $(el)
                 .find(
                     "td.font-weight-bold.align-middle.text-right.d-none.d-sm-table-cell > span"
                 )
                 .text().replace(/[\n\t\r]/g, " ")
                 .trim();
-            state[index]['countryCode'] = $(el).find("td:nth-child(1) > img").attr("alt");
-            state[index]['countryImage'] = $(el).find("td:nth-child(1) > img").attr("src");
-            state[index]['companyLink'] = $(el)
+            const countryCode = $(el).find("td:nth-child(1) > img").attr("alt");
+            const countryImage = $(el).find("td:nth-child(1) > img").attr("src");
+            const companyLink = $(el)
                 .find("td:nth-child(4) > div > a:nth-child(1)")
                 .attr("href");
+
+            const data = { notificationDate, transactionDate, companyName, ticker, companyLink, companyType, insiderName, insiderTitle, tradeType, tradePrice, quantityshares, percentage, value, countryCode, countryImage };
+
+            return scrapedData.push(data);
         });
         res.send({
             page: parseInt(query),
@@ -66,8 +69,9 @@ router.get("/screener/:id", async (req, res) => {
             lastPage: parseInt(query) - 1,
             perPage: state.length,
             status: 200,
-            results: state,
+            results: scrapedData,
         });
+
     } catch (e) {
         res.send({
             status: 400,
