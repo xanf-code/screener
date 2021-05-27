@@ -7,7 +7,7 @@ const request = require('request-promise');
 
 router.get("/test/:id", async (req, res) => {
     const query = req.params.id;
-    const response = await request.get(`https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
+    const response = await request.get(`https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending`);
     res.send({
         "response": response,
     })
