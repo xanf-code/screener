@@ -13,9 +13,6 @@ const MapSchema = new Schema({
 })
 
 const Screener = Schema({
-    Index: {
-        type: Number,
-    },
     NotificationDate: {
         type: String,
     },
