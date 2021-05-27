@@ -9,17 +9,7 @@ router.get("/test/:id", async (req, res) => {
     const query = req.params.id;
     var _include_headers = function (body, response, resolveWithFullResponse) {
         return {
-            'headers': {
-                'accept': '*/*',
-                "accept-language": "en-US,en-IN;q=0.9,en-UM;q=0.8,en;q=0.7",
-                "sec-ch-ua": '\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"90\", \"Google Chrome\";v=\"90\"',
-                "sec-ch-ua-mobile": "?0",
-                "sec-fetch-dest": "empty",
-                "sec-fetch-mode": "cors",
-                "sec-fetch-site": "same-origin",
-                "x-requested-with": "XMLHttpRequest",
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
-            }, 'data': body
+            'headers': response.headers, 'data': body
         };
     };
 
@@ -28,6 +18,17 @@ router.get("/test/:id", async (req, res) => {
         uri: `https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending`,
         transform: _include_headers,
         resolveWithFullResponse: true,
+        headers: {
+            'accept': '*/*',
+            "accept-language": "en-US,en-IN;q=0.9,en-UM;q=0.8,en;q=0.7",
+            "sec-ch-ua": '\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"90\", \"Google Chrome\";v=\"90\"',
+            "sec-ch-ua-mobile": "?0",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            "x-requested-with": "XMLHttpRequest",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+        }
     }
 
     return request(options)
