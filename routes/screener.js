@@ -3,6 +3,15 @@ const cheerio = require("cheerio");
 const router = express.Router();
 const got = require('got');
 const Screener = require('../models/screener_model');
+const request = require('request-promise');
+
+router.get("/test/:id", async (req, res) => {
+    const query = req.params.id;
+    const response = await request.get(`https://www.insiderscreener.com/en/explore?page=${query}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
+    res.send({
+        "response": response,
+    })
+})
 
 router.get("/screener/:id", async (req, res) => {
     try {
@@ -55,7 +64,7 @@ router.get("/screener/:id", async (req, res) => {
             const companyLink = $(el)
                 .find("td:nth-child(4) > div > a:nth-child(1)")
                 .attr("href");
-            const screener = Screener({
+            const screener = new Screener({
                 NotificationDate: notificationDate,
                 TransactionDate: transactionDate,
                 CountryCode: countryCode,
