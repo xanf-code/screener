@@ -83,7 +83,7 @@ router.get("/screener/:id", async (req, res) => {
     } catch (e) {
         res.send({
             status: 400,
-            error: e.message,
+            error: e,
         });
     }
 });
