@@ -64,7 +64,7 @@ async function scrapeInsider(param) {
             Percentage: percentage,
             Value: value,
             url: {
-                CompanyLink: companyLink,
+                CompanyLink: `https://www.insiderscreener.com${companyLink}`,
                 CountryImage: countryImage,
             }
         });
@@ -131,17 +131,17 @@ router.get('/data', async (req, res) => {
 })
 
 // //InsiderName Individual
-// router.get('/screener/:insiderName', async (req, res) => {
-//     try {
-//         const result = await Screener.find({ InsiderName: req.params.insiderName }, "-__v");
-//         res.status(200).json({ serverTime: Date.now(), total: result.length, result });
-//     }
-//     catch (err) {
-//         res.send({
-//             status: 400,
-//             error: e.message,
-//         });
-//     }
-// })
+router.get('/data/:insiderName', async (req, res) => {
+    try {
+        const result = await Screener.find({ InsiderName: req.params.insiderName }, "-__v");
+        res.status(200).json({ serverTime: Date.now(), total: result.length, result });
+    }
+    catch (err) {
+        res.send({
+            status: 400,
+            error: e.message,
+        });
+    }
+})
 
 module.exports = router;
