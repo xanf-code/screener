@@ -23,6 +23,6 @@ connection.once("open", () => {
 app.use(express.json(), cors());
 
 const screener = require("./routes/screener");
-app.use("/api/v1", screener);
+app.use("/", screener);
 
 app.listen(PORT, () => console.log(`Server running successfully at ${PORT}`));

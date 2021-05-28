@@ -4,23 +4,18 @@ const router = express.Router();
 const got = require('got');
 const Screener = require('../models/screener_model');
 
-async function scrapeInsider() {
+async function scrapeInsider(param) {
     const response = await got(
-        `https://www.insiderscreener.com/en/explore?page=1&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`, {
+        `https://www.insiderscreener.com/en/explore?page=${param}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`, {
         "headers": {
             "accept": "*/*",
             "accept-language": "en-US,en-IN;q=0.9,en-UM;q=0.8,en;q=0.7",
             "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"90\", \"Google Chrome\";v=\"90\"",
             "sec-ch-ua-mobile": "?0",
-            "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
-            "x-requested-with": "XMLHttpRequest",
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
         },
-        "referrer": `https://www.insiderscreener.com/en/explore?page=1&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`,
-        "referrerPolicy": "same-origin",
-        "method": "GET",
         "mode": "cors"
     });
     const $ = cheerio.load(response.body);
@@ -76,20 +71,22 @@ async function scrapeInsider() {
     });
 }
 
-async function main() {
+async function main(query) {
     try {
-        await scrapeInsider();
-        console.log('done');
+        await scrapeInsider(query);
+        console.log(`scrapped page ${query}`);
     } catch (e) {
         console.log(e);
     }
 }
 
-router.get('/screener', async (req, res) => {
+router.get('/screener/:id', async (req, res) => {
+    const query = req.params.id;
     try {
-        await main();
+        await main(query);
         res.send({
-            "status": "done"
+            "status": "done",
+            "description": `scrapped page ${query}`,
         });
     }
     catch (err) {
