@@ -19,7 +19,7 @@ async function scrapeInsider(param) {
     // });
     const browser = await puppeteer.launch({
         headless: true,
-        args: ["--no-sandbox"]
+        args: ["--no-sandbox,--proxy-server=http://89.109.7.67:443"]
     });
     const page = await browser.newPage();
     await page.goto(`https://www.insiderscreener.com/en/explore?page=${param}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
