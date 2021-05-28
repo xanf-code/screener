@@ -16,7 +16,6 @@ async function scrapeInsider(param) {
             "sec-fetch-site": "same-origin",
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
         },
-        "mode": "cors"
     });
     const $ = cheerio.load(response.body);
     $('#transactions > div > div > div.table-responsive-md > table > tbody > tr').each((index, el) => {
@@ -69,6 +68,7 @@ async function scrapeInsider(param) {
         });
         screener.save();
     });
+
 }
 
 async function main(query) {
