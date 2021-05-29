@@ -24,6 +24,52 @@ var cache = (duration) => {
     }
 }
 
+//DEBUG-CODE
+// router.get('/debug', async (req, res) => {
+//     const browser = await puppeteer.launch({
+//         ignoreHTTPSErrors: true,
+//         headless: true,
+//         args: [
+//             "--no-sandbox",
+//             // "--proxy-server=http://89.109.7.67:443"
+//         ]
+//     });
+//     const page = await browser.newPage();
+
+//     page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36');
+
+//     await page.goto(`https://www.insiderscreener.com/en/explore?page=10&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
+//     const html = await page.content();
+//     const $ = cheerio.load(html);
+//     $('#transactions > div > div > div.table-responsive-md > table > tbody > tr').each((index, el) => {
+//         const tradePrice = $(el).find("td:nth-child(9)").text().trim();
+//         const tradeType = $(el)
+//             .find("td:nth-child(5) > span > span.d-none.d-sm-block")
+//             .text()
+//             .trim();
+//         const percentage = $(el).find("td:nth-child(8) > span > i > b").text().trim();
+//         const shares = percentage != 0 ? $(el).find("td:nth-child(8)").text().replace(/[\n\t\r]/g, " ")
+//             .split(percentage)[0].trim() : $(el).find("td:nth-child(8)").text().replace(/[\n\t\r]/g, " ")
+//                 .trim();
+//         const quantityshares = tradeType === "Purchase" || tradeType === "Planned purchase" ? `+${shares}` : `-${shares}`;
+//         const value = $(el)
+//             .find(
+//                 "td.font-weight-bold.align-middle.text-right.d-none.d-sm-table-cell > span"
+//             )
+//             .text().replace(/[\n\t\r]/g, " ")
+//             .trim();
+//         const price = tradeType === "Purchase" || tradeType === "Planned purchase" ? `+${value}` : `-${value}`;
+
+//         res.json({
+//             tradePrice: tradePrice,
+//             shares: quantityshares,
+//             // quantityshares: quantityshares,
+//             percentage: percentage,
+//             price: price,
+//         })
+//     })
+// })
+
 async function scrapeInsider(param) {
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,
@@ -56,14 +102,18 @@ async function scrapeInsider(param) {
             .text()
             .trim();
         const tradePrice = $(el).find("td:nth-child(9)").text().trim();
-        const quantityshares = $(el).find("td:nth-child(8)").text().trim();
         const percentage = $(el).find("td:nth-child(8) > span > i > b").text().trim();
+        const shares = percentage != 0 ? $(el).find("td:nth-child(8)").text().replace(/[\n\t\r]/g, " ")
+            .split(percentage)[0].trim() : $(el).find("td:nth-child(8)").text().replace(/[\n\t\r]/g, " ")
+                .trim();
+        const quantityshares = tradeType === "Purchase" || tradeType === "Planned purchase" ? `+${shares}` : `-${shares}`;
         const value = $(el)
             .find(
                 "td.font-weight-bold.align-middle.text-right.d-none.d-sm-table-cell > span"
             )
             .text().replace(/[\n\t\r]/g, " ")
             .trim();
+        const price = tradeType === "Purchase" || tradeType === "Planned purchase" ? `+${value}` : `-${value}`;
         const countryCode = $(el).find("td:nth-child(1) > img").attr("alt");
         const countryImage = $(el).find("td:nth-child(1) > img").attr("src");
         const companyLink = $(el)
@@ -82,7 +132,7 @@ async function scrapeInsider(param) {
             Price: tradePrice,
             QuantityShares: quantityshares,
             Percentage: percentage,
-            Value: value,
+            Value: price,
             url: {
                 CompanyLink: `https://www.insiderscreener.com${companyLink}`,
                 CountryImage: countryImage,
