@@ -120,7 +120,7 @@ router.get('/screener/:id', async (req, res) => {
 });
 
 // GET All insider
-router.get('/data', cache(1836000), async (req, res) => {
+router.get('/data', cache(300000), async (req, res) => {
     try {
         const limit = req.query.limit ? parseInt(req.query.limit) : 75;
         const page = req.query.page ? parseInt(req.query.page) : 1;
