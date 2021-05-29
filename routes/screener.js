@@ -3,6 +3,7 @@ const cheerio = require("cheerio");
 const router = express.Router();
 const Screener = require('../models/screener_model');
 const puppeteer = require('puppeteer');
+const got = require('got');
 
 async function scrapeInsider(param) {
     const browser = await puppeteer.launch({
@@ -130,7 +131,7 @@ router.get('/data', async (req, res) => {
     }
 })
 
-// //InsiderName Individual
+// InsiderName Individual
 router.get('/data/:insiderName', async (req, res) => {
     try {
         const result = await Screener.find({ InsiderName: req.params.insiderName }, "-__v");
@@ -140,6 +141,62 @@ router.get('/data/:insiderName', async (req, res) => {
         res.send({
             status: 400,
             error: e.message,
+        });
+    }
+})
+
+//Timer
+async function sleep(miliseconds) {
+    return new Promise(resolve => setTimeout(resolve, miliseconds));
+}
+
+//Clean and get new data
+async function newData() {
+    await Screener.collection.drop().then(async () => {
+        await sleep(10000);
+        got('https://screenerapi.herokuapp.com/screener/1').then(async () => {
+            await sleep(20000);
+            got('https://screenerapi.herokuapp.com/screener/2').then(async () => {
+                await sleep(30000);
+                got('https://screenerapi.herokuapp.com/screener/3').then(async () => {
+                    await sleep(40000);
+                    got('https://screenerapi.herokuapp.com/screener/4').then(async () => {
+                        await sleep(50000);
+                        got('https://screenerapi.herokuapp.com/screener/5').then(async () => {
+                            await sleep(60000);
+                            got('https://screenerapi.herokuapp.com/screener/6').then(async () => {
+                                await sleep(70000);
+                                got('https://screenerapi.herokuapp.com/screener/7').then(async () => {
+                                    await sleep(80000);
+                                    got('https://screenerapi.herokuapp.com/screener/8').then(async () => {
+                                        await sleep(90000);
+                                        got('https://screenerapi.herokuapp.com/screener/9').then(async () => {
+                                            await sleep(100000);
+                                            got('https://screenerapi.herokuapp.com/screener/10');
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+}
+
+router.get('/newData', async (req, res) => {
+    try {
+        await newData();
+        res.send({
+            status: 200,
+            error: 'Processing',
+        });
+    }
+    catch (e) {
+        res.send({
+            status: 400,
+            error: 'Cannot fetch new data, please try again later',
         });
     }
 })
