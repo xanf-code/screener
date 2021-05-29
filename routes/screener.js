@@ -4,6 +4,25 @@ const router = express.Router();
 const Screener = require('../models/screener_model');
 const puppeteer = require('puppeteer');
 const got = require('got');
+var mcache = require('memory-cache');
+
+var cache = (duration) => {
+    return (req, res, next) => {
+        let key = '__express__' + req.originalUrl || req.url
+        let cachedBody = mcache.get(key)
+        if (cachedBody) {
+            res.send(cachedBody)
+            return
+        } else {
+            res.sendResponse = res.send
+            res.send = (body) => {
+                mcache.put(key, body, duration * 1000);
+                res.sendResponse(body)
+            }
+            next()
+        }
+    }
+}
 
 async function scrapeInsider(param) {
     const browser = await puppeteer.launch({
@@ -101,7 +120,7 @@ router.get('/screener/:id', async (req, res) => {
 });
 
 // GET All insider
-router.get('/data', async (req, res) => {
+router.get('/data', cache(1836000), async (req, res) => {
     try {
         const limit = req.query.limit ? parseInt(req.query.limit) : 75;
         const page = req.query.page ? parseInt(req.query.page) : 1;
