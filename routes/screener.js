@@ -76,16 +76,19 @@ var cache = (duration) => {
 async function scrapeInsider(param) {
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,
+        ignoreDefaultArgs: ['--disable-extensions'],
         headless: true,
         args: [
             "--no-sandbox",
-            "--proxy-server=http://89.109.7.67:443"
+            "--proxy-server=http://89.109.7.67:443",
+            "--disable-gpu",
+            "--disabled-setupid-sandbox",
         ]
     });
     const page = await browser.newPage();
 
     page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36');
-
+    await page.setDefaultNavigationTimeout(0);
     await page.goto(`https://www.insiderscreener.com/en/explore?page=${param}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
     const html = await page.content();
     const $ = cheerio.load(html);
@@ -228,25 +231,25 @@ async function sleep(miliseconds) {
 async function newData() {
     await Screener.collection.drop().then(async () => {
         await sleep(10000);
-        got('https://screenerapi.herokuapp.com/screener/1').then(async () => {
+        await got('https://screenerapi.herokuapp.com/screener/1').then(async () => {
             await sleep(20000);
-            got('https://screenerapi.herokuapp.com/screener/2').then(async () => {
+            await got('https://screenerapi.herokuapp.com/screener/2').then(async () => {
                 await sleep(30000);
-                got('https://screenerapi.herokuapp.com/screener/3').then(async () => {
+                await got('https://screenerapi.herokuapp.com/screener/3').then(async () => {
                     await sleep(40000);
-                    got('https://screenerapi.herokuapp.com/screener/4').then(async () => {
+                    await got('https://screenerapi.herokuapp.com/screener/4').then(async () => {
                         await sleep(50000);
-                        got('https://screenerapi.herokuapp.com/screener/5').then(async () => {
+                        await got('https://screenerapi.herokuapp.com/screener/5').then(async () => {
                             await sleep(60000);
-                            got('https://screenerapi.herokuapp.com/screener/6').then(async () => {
+                            await got('https://screenerapi.herokuapp.com/screener/6').then(async () => {
                                 await sleep(70000);
-                                got('https://screenerapi.herokuapp.com/screener/7').then(async () => {
+                                await got('https://screenerapi.herokuapp.com/screener/7').then(async () => {
                                     await sleep(80000);
-                                    got('https://screenerapi.herokuapp.com/screener/8').then(async () => {
+                                    await got('https://screenerapi.herokuapp.com/screener/8').then(async () => {
                                         await sleep(90000);
-                                        got('https://screenerapi.herokuapp.com/screener/9').then(async () => {
+                                        await got('https://screenerapi.herokuapp.com/screener/9').then(async () => {
                                             await sleep(100000);
-                                            got('https://screenerapi.herokuapp.com/screener/10');
+                                            await got('https://screenerapi.herokuapp.com/screener/10');
                                         });
                                     });
                                 });
