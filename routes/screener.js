@@ -38,10 +38,11 @@ var cache = (duration) => {
 
 //     page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36');
 
-//     await page.goto(`https://www.insiderscreener.com/en/explore?page=10&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
+//     await page.goto(`https://www.insiderscreener.com/en/explore?page=2&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
 //     const html = await page.content();
 //     const $ = cheerio.load(html);
 //     $('#transactions > div > div > div.table-responsive-md > table > tbody > tr').each((index, el) => {
+//         const insiderName = $(el).find("td:nth-child(6) > p:nth-child(1)").text().trim();
 //         const tradePrice = $(el).find("td:nth-child(9)").text().trim();
 //         const tradeType = $(el)
 //             .find("td:nth-child(5) > span > span.d-none.d-sm-block")
@@ -59,13 +60,15 @@ var cache = (duration) => {
 //             .text().replace(/[\n\t\r]/g, " ")
 //             .trim();
 //         const price = tradeType === "Purchase" || tradeType === "Planned purchase" ? `+${value}` : `-${value}`;
-
+//         const currencyCode = value.split(" ")[1]
 //         res.json({
+//             name: insiderName,
 //             tradePrice: tradePrice,
 //             shares: quantityshares,
 //             // quantityshares: quantityshares,
 //             percentage: percentage,
 //             price: price,
+//             cc: currencyCode,
 //         })
 //     })
 // })
@@ -114,6 +117,7 @@ async function scrapeInsider(param) {
             .text().replace(/[\n\t\r]/g, " ")
             .trim();
         const price = tradeType === "Purchase" || tradeType === "Planned purchase" ? `+${value}` : `-${value}`;
+        const currencyCode = value.split(" ")[1];
         const countryCode = $(el).find("td:nth-child(1) > img").attr("alt");
         const countryImage = $(el).find("td:nth-child(1) > img").attr("src");
         const companyLink = $(el)
@@ -133,6 +137,7 @@ async function scrapeInsider(param) {
             QuantityShares: quantityshares,
             Percentage: percentage,
             Value: price,
+            CurrencyCode: currencyCode,
             url: {
                 CompanyLink: `https://www.insiderscreener.com${companyLink}`,
                 CountryImage: countryImage,

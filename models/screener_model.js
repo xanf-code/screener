@@ -58,6 +58,9 @@ const Screener = Schema({
     Value: {
         type: String,
     },
+    CurrencyCode: {
+        type: String,
+    },
     url: {
         type: MapSchema,
         _id: false,
