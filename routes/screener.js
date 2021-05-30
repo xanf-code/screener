@@ -184,7 +184,7 @@ router.get('/data', cache(300), async (req, res) => {
         const result = await Screener.find({}, "-__v")
             .skip((page - 1) * limit)
             .limit(limit)
-            .sort({ NotificationDate: -1 });
+            .sort({ NotificationDate: -1, TransactionDate: -1 });
         res.status(200).json({
             serverTime: Date.now(),
             length: count,
