@@ -82,7 +82,6 @@ async function scrapeInsider(param) {
             "--no-sandbox",
             "--proxy-server=http://89.109.7.67:443",
             "--disable-gpu",
-            "--disabled-setupid-sandbox",
         ]
     });
     const page = await browser.newPage();
@@ -229,26 +228,25 @@ async function sleep(miliseconds) {
 //Clean and get new data
 async function newData() {
     await Screener.collection.drop().then(async () => {
-        await sleep(10000);
-        await got('https://screenerapi.herokuapp.com/screener/1').then(async () => {
+        got('https://screenerapi.herokuapp.com/screener/1').then(async () => {
             await sleep(20000);
-            await got('https://screenerapi.herokuapp.com/screener/2').then(async () => {
+            got('https://screenerapi.herokuapp.com/screener/2').then(async () => {
                 await sleep(30000);
-                await got('https://screenerapi.herokuapp.com/screener/3').then(async () => {
+                got('https://screenerapi.herokuapp.com/screener/3').then(async () => {
                     await sleep(40000);
-                    await got('https://screenerapi.herokuapp.com/screener/4').then(async () => {
+                    got('https://screenerapi.herokuapp.com/screener/4').then(async () => {
                         await sleep(50000);
-                        await got('https://screenerapi.herokuapp.com/screener/5').then(async () => {
+                        got('https://screenerapi.herokuapp.com/screener/5').then(async () => {
                             await sleep(60000);
-                            await got('https://screenerapi.herokuapp.com/screener/6').then(async () => {
+                            got('https://screenerapi.herokuapp.com/screener/6').then(async () => {
                                 await sleep(70000);
-                                await got('https://screenerapi.herokuapp.com/screener/7').then(async () => {
+                                got('https://screenerapi.herokuapp.com/screener/7').then(async () => {
                                     await sleep(80000);
-                                    await got('https://screenerapi.herokuapp.com/screener/8').then(async () => {
+                                    got('https://screenerapi.herokuapp.com/screener/8').then(async () => {
                                         await sleep(90000);
-                                        await got('https://screenerapi.herokuapp.com/screener/9').then(async () => {
+                                        got('https://screenerapi.herokuapp.com/screener/9').then(async () => {
                                             await sleep(100000);
-                                            await got('https://screenerapi.herokuapp.com/screener/10');
+                                            got('https://screenerapi.herokuapp.com/screener/10');
                                         });
                                     });
                                 });
