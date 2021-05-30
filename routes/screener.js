@@ -220,6 +220,21 @@ router.get('/data/:insiderName', async (req, res) => {
     }
 })
 
+// Company Data
+router.get('/company/:companyName', async (req, res) => {
+    try {
+        const result = await Screener.find({ CompanyName: req.params.companyName }, "-__v");
+        res.status(200).json({ serverTime: Date.now(), total: result.length, result });
+    }
+    catch (err) {
+        res.send({
+            status: 400,
+            error: e.message,
+        });
+    }
+})
+
+
 //Timer
 async function sleep(miliseconds) {
     return new Promise(resolve => setTimeout(resolve, miliseconds));
