@@ -3,8 +3,11 @@ const cheerio = require("cheerio");
 const router = express.Router();
 const Screener = require('../models/screener_model');
 const puppeteer = require('puppeteer');
+const puppeteerExtra = require('puppeteer-extra');
+const pluginStealth = require('puppeteer-extra-plugin-stealth');
 const got = require('got');
 var mcache = require('memory-cache');
+puppeteerExtra.use(pluginStealth());
 
 var cache = (duration) => {
     return (req, res, next) => {
@@ -74,19 +77,19 @@ var cache = (duration) => {
 // })
 
 async function scrapeInsider(param) {
-    const browser = await puppeteer.launch({
+    const browser = await puppeteerExtra.launch({
         ignoreHTTPSErrors: true,
         ignoreDefaultArgs: ['--disable-extensions'],
         headless: true,
         args: [
             "--no-sandbox",
-            "--proxy-server=http://89.109.7.67:443",
+            // "--proxy-server=http://89.109.7.67:443",
             "--disable-gpu",
         ]
     });
     const page = await browser.newPage();
 
-    page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36');
+    page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36');
     await page.goto(`https://www.insiderscreener.com/en/explore?page=${param}&nb_shares=1&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
     const html = await page.content();
     const $ = cheerio.load(html);

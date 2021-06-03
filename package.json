@@ -18,7 +18,9 @@
     "got": "^11.8.2",
     "memory-cache": "^0.2.0",
     "mongoose": "^5.12.11",
-    "puppeteer": "^9.1.1"
+    "puppeteer": "^9.1.1",
+    "puppeteer-extra": "^3.1.18",
+    "puppeteer-extra-plugin-stealth": "^2.7.8"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
