@@ -90,7 +90,7 @@ async function scrapeInsider(param) {
     const page = await browser.newPage();
 
     page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36');
-    await page.goto(`https://www.insiderscreener.com/en/explore?page=${params}&sort_by=transaction_date&sort_order=descending`);
+    await page.goto(`https://www.insiderscreener.com/en/explore?page=${param}&sort_by=transaction_date&sort_order=descending`);
     const html = await page.content();
     const $ = cheerio.load(html);
     $('#transactions > div > div > div.table-responsive-md > table > tbody > tr').each((index, el) => {
