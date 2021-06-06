@@ -2,7 +2,6 @@ const express = require("express");
 const cheerio = require("cheerio");
 const router = express.Router();
 const Screener = require('../models/screener_model');
-const puppeteer = require('puppeteer');
 const puppeteerExtra = require('puppeteer-extra');
 const pluginStealth = require('puppeteer-extra-plugin-stealth');
 const got = require('got');
@@ -90,7 +89,7 @@ async function scrapeInsider(param) {
     const page = await browser.newPage();
 
     page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36');
-    await page.goto(`https://www.insiderscreener.com/en/explore?page=${param}&sort_by=transaction_date&sort_order=descending`);
+    await page.goto(`https://www.insiderscreener.com/en/explore?page=${param}&sort_by=transaction_date&sort_order=descending&regulator=US&regulator=FR&regulator=DE&regulator=CH&regulator=BE&regulator=ES&regulator=NL&regulator=SE&regulator=IT&regulator=GR&regulator=IN&transaction_type=BUY&transaction_type=SELL&transaction_type=PLANNED_PURCHASE&transaction_type=PLANNED_SALE&i_group=501030&i_group=502010&i_group=501020&i_group=503010&i_group=501010&i_group=533020&i_group=533010&i_group=534030&i_group=532020&i_group=532050&i_group=531010&i_group=534020&i_group=532030&i_group=532040&i_group=522030&i_group=522010&i_group=521020&i_group=521010&i_group=524050&i_group=524070&i_group=523010&i_group=524060&i_group=522020&i_group=511010&i_group=513010&i_group=512020&i_group=512010&i_group=513020&i_group=554030&i_group=553010&i_group=551010&i_group=551020&i_group=555010&i_group=554020&i_group=556010&i_group=542010&i_group=541020&i_group=543010&i_group=541010&i_group=562010&i_group=562020&i_group=561020&i_group=561010&i_group=572010&i_group=571060&i_group=571040&i_group=571020&i_group=571010&i_group=571050&i_group=581010&i_group=591010&i_group=591040&i_group=591030&i_group=591020&b_sector=5010&b_sector=5020&b_sector=5030&b_sector=5330&b_sector=5340&b_sector=5320&b_sector=5310&b_sector=5220&b_sector=5210&b_sector=5240&b_sector=5230&b_sector=5110&b_sector=5130&b_sector=5120&b_sector=5540&b_sector=5530&b_sector=5510&b_sector=5550&b_sector=5560&b_sector=5420&b_sector=5410&b_sector=5430&b_sector=5620&b_sector=5610&b_sector=5720&b_sector=5710&b_sector=5810&b_sector=5910&e_sector=50&e_sector=53&e_sector=52&e_sector=51&e_sector=55&e_sector=54&e_sector=56&e_sector=57&e_sector=58&e_sector=59&position_type=1&position_type=2&position_type=3&position_type=4&position_type=5&position_type=6&position_type=7&position_type=8&position_type=9`);
     const html = await page.content();
     const $ = cheerio.load(html);
     $('#transactions > div > div > div.table-responsive-md > table > tbody > tr').each((index, el) => {
@@ -181,14 +180,16 @@ router.get('/screener/:id', async (req, res) => {
 // GET All insider
 router.get('/data', cache(300), async (req, res) => {
     try {
+        const countryQuery = req.query;
         const limit = req.query.limit ? parseInt(req.query.limit) : 75;
         const page = req.query.page ? parseInt(req.query.page) : 1;
         const count = await Screener.countDocuments();
-        const result = await Screener.find({}, "-__v")
+        const result = await Screener.find({ CountryCode: countryQuery.country }, "-__v")
             .skip((page - 1) * limit)
             .limit(limit)
             .sort({ NotificationDate: -1, TransactionDate: -1 });
         res.status(200).json({
+            query: countryQuery,
             serverTime: Date.now(),
             length: count,
             currentPage: page,
@@ -264,7 +265,37 @@ async function newData() {
                                         await sleep(90000);
                                         got('https://screenerapi.herokuapp.com/screener/9').then(async () => {
                                             await sleep(100000);
-                                            got('https://screenerapi.herokuapp.com/screener/10');
+                                            got('https://screenerapi.herokuapp.com/screener/10').then(async () => {
+                                                await sleep(100000);
+                                                got('https://screenerapi.herokuapp.com/screener/11').then(async () => {
+                                                    await sleep(100000);
+                                                    got('https://screenerapi.herokuapp.com/screener/12').then(async () => {
+                                                        await sleep(100000);
+                                                        got('https://screenerapi.herokuapp.com/screener/13').then(async () => {
+                                                            await sleep(100000);
+                                                            got('https://screenerapi.herokuapp.com/screener/14').then(async () => {
+                                                                await sleep(100000);
+                                                                got('https://screenerapi.herokuapp.com/screener/15').then(async () => {
+                                                                    await sleep(100000);
+                                                                    got('https://screenerapi.herokuapp.com/screener/16').then(async () => {
+                                                                        await sleep(100000);
+                                                                        got('https://screenerapi.herokuapp.com/screener/17').then(async () => {
+                                                                            await sleep(100000);
+                                                                            got('https://screenerapi.herokuapp.com/screener/18').then(async () => {
+                                                                                await sleep(100000);
+                                                                                got('https://screenerapi.herokuapp.com/screener/19').then(async () => {
+                                                                                    await sleep(100000);
+                                                                                    got('https://screenerapi.herokuapp.com/screener/20');
+                                                                                });
+                                                                            });
+                                                                        });
+                                                                    });
+                                                                });
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            });
                                         });
                                     });
                                 });
