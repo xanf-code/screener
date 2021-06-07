@@ -183,11 +183,12 @@ router.get('/data', cache(300), async (req, res) => {
         const countryQuery = req.query;
         const limit = req.query.limit ? parseInt(req.query.limit) : 75;
         const page = req.query.page ? parseInt(req.query.page) : 1;
-        const count = await Screener.countDocuments();
         const result = await Screener.find({ CountryCode: countryQuery.country }, "-__v")
             .skip((page - 1) * limit)
             .limit(limit)
             .sort({ NotificationDate: -1, TransactionDate: -1 });
+        const indresult = await Screener.find({ CountryCode: countryQuery.country });
+        const count = indresult.length;
         res.status(200).json({
             query: countryQuery,
             serverTime: Date.now(),
