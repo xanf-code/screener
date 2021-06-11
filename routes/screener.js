@@ -27,7 +27,7 @@ var cache = (duration) => {
 }
 
 let trendingArray = [];
-router.get('/trending', async (req, res) => {
+router.get('/trending', cache(36000000), async (req, res) => {
     const browser = await puppeteerExtra.launch({
         ignoreHTTPSErrors: true,
         ignoreDefaultArgs: ['--disable-extensions'],
