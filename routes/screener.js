@@ -26,8 +26,8 @@ var cache = (duration) => {
     }
 }
 
-let trendingArray = [];
-router.get('/trending', cache(36000000), async (req, res) => {
+
+router.get('/trending', cache(21600), async (req, res) => {
     const browser = await puppeteerExtra.launch({
         ignoreHTTPSErrors: true,
         ignoreDefaultArgs: ['--disable-extensions'],
@@ -39,16 +39,15 @@ router.get('/trending', cache(36000000), async (req, res) => {
         ]
     });
     const page = await browser.newPage();
-
     page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36');
     await page.goto(`https://www.insiderscreener.com/en/`);
     const html = await page.content();
     const $ = cheerio.load(html);
+    let trendingArray = [];
     $('#search_bar_div > div.mx-2.mb-3 > div > div.row.mx-3.p-0.text-dark > div:nth-child(2) > p').each((index, el) => {
-        const CountryCode = $(el).find(`img`).attr("alt");
-        const InsiderName = $(el).find(`a`).text().trim();
-        const Ticker = $(el).find(`span`).text().replace("(", " ").replace(")", " ").trim();
-
+        let CountryCode = $(el).find(`img`).attr("alt");
+        let InsiderName = $(el).find(`a`).text().trim();
+        let Ticker = $(el).find(`span`).text().replace("(", " ").replace(")", " ").trim();
         trendingArray.push({
             CountryCode,
             InsiderName,
